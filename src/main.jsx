@@ -5,6 +5,7 @@ import { GlobalProvider } from "./context/infoContext";
 import "./index.css";
 import Generator from "./pages/Generator";
 import GitHub from "./pages/GitHub";
+import Debounce from "./pages/Debounce";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
   {
     path: "/generator",
     element: <Generator />,
+  },
+  {
+    path: "/debounce",
+    element: <Debounce />,
   },
 ]);
 

@@ -1,9 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { GlobalContext } from "../context/infoContext";
+import Suggestion from "./Suggestion";
 
 const SearchBox = () => {
-  const [username, setUsername] = useState("shohanux1");
+  const [username, setUsername] = useState("");
+  const [searchTerm, setSearchTerm] = useState(null);
+
+  const [isOpen, setIsOpen] = useState(false);
   const { updateUser, updateLoading, isLoading, errorHandler } =
     useContext(GlobalContext);
 
@@ -12,7 +16,11 @@ const SearchBox = () => {
       updateUser(null);
       errorHandler(false);
       updateLoading(true);
-      await fetchData();
+      const data = await fetchData();
+      if (data.message) {
+        errorHandler(true);
+      }
+      updateUser(data);
       updateLoading(false);
       setError(false);
     } catch (error) {
@@ -23,15 +31,24 @@ const SearchBox = () => {
   const fetchData = async () => {
     const res = await fetch(`https://api.github.com/users/${username}`);
     const data = await res.json();
-    if (data.message) {
-      errorHandler(true);
-    }
-    updateUser(data);
+    return data;
   };
 
   useEffect(() => {
-    handleSubmit();
-  }, []);
+    const timer = setTimeout(async () => {
+      if (username) {
+        const data = await fetchData();
+        if (!data.message) {
+          setSearchTerm(data);
+          setIsOpen(true);
+        } else {
+          setSearchTerm(null);
+        }
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [username]);
 
   return (
     <>
@@ -59,6 +76,13 @@ const SearchBox = () => {
           {isLoading ? "Searching..." : "Search"}
         </button>
       </div>
+      {isOpen && searchTerm && (
+        <Suggestion
+          handleSubmit={handleSubmit}
+          setIsOpen={setIsOpen}
+          searchTerm={searchTerm}
+        />
+      )}
     </>
   );
 };
