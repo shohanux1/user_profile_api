@@ -11,11 +11,11 @@ const GitHub = () => {
   useEffect(() => {
     document.body.classList.remove("dark");
     document.body.classList.add(`${theme ? "dark" : "light"}`);
-    document.body.classList.remove("light");
+    document.body.style.background = `${theme ? "#141C2F" : "#eaeffc"}`;
   }, [theme]);
 
   return (
-    <div className="h-screen bg-[#eaeffc] px-6 dark:bg-[#141C2F] md:px-44 lg:px-80">
+    <div className="max-w-5xl mx-auto h-screen bg-[#eaeffc] px-6 dark:bg-[#141C2F] sm:px-20 md:px-32 lg:px-40">
       <Navbar />
       <SearchBox />
       {isLoading && <Loader />}
