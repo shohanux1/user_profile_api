@@ -4,18 +4,24 @@ import { GlobalContext } from "../context/infoContext";
 import Suggestion from "./Suggestion";
 
 const SearchBox = () => {
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("shohanux1");
   const [searchTerm, setSearchTerm] = useState(null);
 
   const [isOpen, setIsOpen] = useState(false);
   const { updateUser, updateLoading, isLoading, errorHandler } =
     useContext(GlobalContext);
 
+  const handleChange = (e) => {
+    setUsername(e.target.value);
+    setIsOpen(true);
+  };
+
   const handleSubmit = async () => {
     try {
       updateUser(null);
       errorHandler(false);
       updateLoading(true);
+      setIsOpen(false);
       const data = await fetchData();
       if (data.message) {
         errorHandler(true);
@@ -40,7 +46,6 @@ const SearchBox = () => {
         const data = await fetchData();
         if (!data.message) {
           setSearchTerm(data);
-          setIsOpen(true);
         } else {
           setSearchTerm(null);
         }
@@ -49,6 +54,10 @@ const SearchBox = () => {
 
     return () => clearTimeout(timer);
   }, [username]);
+
+  useEffect(() => {
+    handleSubmit();
+  }, []);
 
   return (
     <>
@@ -61,7 +70,7 @@ const SearchBox = () => {
         </div>
         <input
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={handleChange}
           className="w-full outline-none bg-transparent py-2"
           type="text"
           required
@@ -76,7 +85,7 @@ const SearchBox = () => {
           {isLoading ? "Searching..." : "Search"}
         </button>
       </div>
-      {isOpen && searchTerm && (
+      {isOpen && searchTerm && username && (
         <Suggestion
           handleSubmit={handleSubmit}
           setIsOpen={setIsOpen}
