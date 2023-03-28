@@ -1,6 +1,10 @@
 import React, { useState } from "react";
+import { Link, useMatches } from "react-router-dom";
 
 const Generator = () => {
+  const matches = useMatches();
+  const pathName = matches[0].pathname.split("/");
+
   const [amount, setAmount] = useState("");
   const [operator, setOperator] = useState("017");
   const [numbers, setNumbers] = useState([]);
@@ -25,6 +29,16 @@ const Generator = () => {
 
   return (
     <>
+      <div className="flex">
+        {pathName
+          .filter((item) => item !== "")
+          .map((item) => (
+            <Link to={item} key={item}>
+              /{item}
+            </Link>
+          ))}
+      </div>
+
       <div className="flex items-center justify-center">
         <form className="flex flex-col mt-5" onSubmit={submitHandler}>
           <input
